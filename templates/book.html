@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthAI — Book an Appointment</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f7f5;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --accent: #9df23d;
+      --accent-hover: #b0fb57;
+      --text: #1a201d;
+      --muted: #64748b;
+      --dark-bg: #1a201d;
+      --green: #8bed16;
+      --yellow: #facc15;
+      --red: #ff4b4b;
+      --input-bg: #f8faf9;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.02);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    nav {
+      background: var(--dark-bg);
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .nav-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-brand::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 6px;
+      transform: rotate(45deg);
+    }
+
+    .nav-brand span {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .btn:hover {
+      background: #fff;
+      color: var(--dark-bg);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--dark-bg);
+      padding: 60px 24px 80px;
+      text-align: center;
+      border-radius: 0 0 40px 40px;
+      margin-bottom: -40px;
+      animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      background: rgba(157, 242, 61, .15);
+      border: 1px solid rgba(157, 242, 61, .3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 100px;
+    }
+
+    .hero-badge::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: #fff;
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      color: #a1a1aa;
+      font-size: 16px;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Container & form ── */
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 36px 20px 70px;
+      position: relative;
+      z-index: 2;
+      animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s backwards;
+    }
+
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 30px 0 16px;
+      font-family: 'Syne', sans-serif;
+    }
+
+    .form-section-title:first-child {
+      margin-top: 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-1 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media(max-width: 560px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .form-card {
+        padding: 24px;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.5px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 20px;
+      transition: all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      appearance: none;
+    }
+
+    .field textarea {
+      border-radius: 20px;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      outline: none;
+      border-color: var(--dark-bg);
+      box-shadow: 0 0 0 4px rgba(157, 242, 61, 0.2);
+      background: #fff;
+    }
+
+    /* ── Doctor cards ── */
+    .doctor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    @media(max-width: 640px) {
+      .doctor-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media(max-width: 400px) {
+      .doctor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .doctor-opt {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      background: var(--input-bg);
+      transition: all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center;
+    }
+
+    .doctor-opt:hover {
+      border-color: var(--dark-bg);
+      transform: translateY(-2px);
+    }
+
+    .doctor-opt.selected {
+      border-color: var(--dark-bg);
+      background: var(--dark-bg);
+      color: #fff !important;
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    .doctor-opt.selected .d-name,
+    .doctor-opt.selected .d-spec {
+      color: #fff;
+    }
+
+    .doctor-opt input {
+      display: none;
+    }
+
+    .doctor-opt .d-icon {
+      font-size: 28px;
+      background: #fff;
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .doctor-opt .d-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      transition: color 0.2s;
+    }
+
+    .doctor-opt .d-spec {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    /* ── Time slots ── */
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    @media(max-width: 500px) {
+      .slot-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .slot-btn {
+      padding: 12px;
+      border-radius: 100px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--input-bg);
+      color: var(--muted);
+      transition: all .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .slot-btn:hover {
+      border-color: var(--dark-bg);
+      transform: translateY(-2px);
+    }
+
+    .slot-btn.selected {
+      border-color: var(--dark-bg);
+      background: var(--dark-bg);
+      color: #fff;
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    .slot-btn input {
+      display: none;
+    }
+
+    /* ── Submit ── */
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent);
+      border: none;
+      border-radius: 100px;
+      color: var(--dark-bg);
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      margin-top: 32px;
+      transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 30px rgba(157, 242, 61, 0.4);
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 15px 40px rgba(157, 242, 61, 0.5);
+    }
+
+    /* ── Success state ── */
+    .success-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 50px 40px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+    }
+
+    .success-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      animation: pop .6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .success-card h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      color: var(--text);
+      margin-bottom: 12px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .success-card p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .success-detail {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px 30px;
+      margin: 30px 0;
+      text-align: left;
+    }
+
+    .success-detail .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .success-detail .row:last-child {
+      border-bottom: none;
+    }
+
+    .success-detail .row .label {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .success-detail .row .value {
+      font-weight: 700;
+      color: var(--dark-bg);
+    }
+
+    .success-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .btn-green-solid {
+      background: var(--accent);
+      color: var(--dark-bg);
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(157, 242, 61, 0.3);
+    }
+
+    .btn-green-solid:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(157, 242, 61, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="nav-brand">Health<span>AI</span></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap">
+      <a href="/" class="btn">← Home</a>
+      <a href="/book" class="btn" style="border-color:rgba(63,185,80,.4); color:var(--green)">📅 Book Appointment</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-badge">Doctor Appointment Booking</div>
+    <h1>Book a Consultation</h1>
+    <p>Connect with the right specialist based on your health analysis results.</p>
+  </div>
+
+  <div class="container">
+
+    {% if success %}
+    <!-- ── SUCCESS STATE ── -->
+    <div class="success-card">
+      <div class="success-icon">✅</div>
+      <h2>Appointment Confirmed!</h2>
+      <p>Thank you, <strong>{{ name }}</strong>. Your appointment request has been received.</p>
+      <p style="font-size:12px; color:var(--muted)">Our team will contact you within 24 hours to confirm the slot.</p>
+
+      <div class="success-detail">
+        <div class="row">
+          <span class="label">Specialty</span>
+          <span class="value">{{ specialty }}</span>
+        </div>
+        <div class="row">
+          <span class="label">Doctor</span>
+          <span class="value">{{ doctor }}</span>
+        </div>
+        <div class="row">
+          <span class="label">Preferred Date</span>
+          <span class="value">{{ date }}</span>
+        </div>
+        <div class="row">
+          <span class="label">Time Slot</span>
+          <span class="value">{{ time_slot }}</span>
+        </div>
+      </div>
+
+      <p style="font-size:12px; color:var(--muted)">
+        A confirmation summary has been saved. Please bring this to your appointment.
+      </p>
+
+      <div class="success-actions">
+        <a href="/" class="btn-green-solid">🔬 New Health Analysis</a>
+        <a href="/book" class="btn-green-solid">📅 Book Another</a>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- ── BOOKING FORM ── -->
+    <div class="form-card">
+      <form method="POST" action="/book">
+
+        <!-- Patient Info -->
+        <div class="form-section-title">👤 Patient Information</div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Full Name *</label>
+            <input type="text" name="name" placeholder="e.g. Rahul Sharma" required />
+          </div>
+          <div class="field">
+            <label>Age</label>
+            <input type="number" name="age" placeholder="e.g. 45" min="1" max="120" />
+          </div>
+          <div class="field">
+            <label>Email Address *</label>
+            <input type="email" name="email" placeholder="you@example.com" required />
+          </div>
+          <div class="field">
+            <label>Phone Number *</label>
+            <input type="tel" name="phone" placeholder="+91 98765 43210" required />
+          </div>
+        </div>
+
+        <!-- Doctor Specialty -->
+        <div class="form-section-title">🏥 Choose Specialty</div>
+        <div class="doctor-grid" id="specialty-grid">
+
+          <label class="doctor-opt {% if suggested == 'Endocrinologist' %}selected{% endif %}"
+            onclick="selectDoctor(this, 'Endocrinologist')">
+            <input type="radio" name="specialty" value="Endocrinologist" {% if suggested=='Endocrinologist' %}checked{%
+              endif %} />
+            <span class="d-icon">🩸</span>
+            <span class="d-name">Dr. Meera Kapoor</span>
+            <span class="d-spec">Endocrinologist</span>
+          </label>
+
+          <label class="doctor-opt {% if suggested == 'Cardiologist' %}selected{% endif %}"
+            onclick="selectDoctor(this, 'Cardiologist')">
+            <input type="radio" name="specialty" value="Cardiologist" {% if suggested=='Cardiologist' %}checked{% endif
+              %} />
+            <span class="d-icon">❤️</span>
+            <span class="d-name">Dr. Arjun Mehta</span>
+            <span class="d-spec">Cardiologist</span>
+          </label>
+
+          <label class="doctor-opt {% if suggested == 'Hepatologist / Gastroenterologist' %}selected{% endif %}"
+            onclick="selectDoctor(this, 'Hepatologist / Gastroenterologist')">
+            <input type="radio" name="specialty" value="Hepatologist / Gastroenterologist" {% if
+              suggested=='Hepatologist / Gastroenterologist' %}checked{% endif %} />
+            <span class="d-icon">🫁</span>
+            <span class="d-name">Dr. Sunita Rao</span>
+            <span class="d-spec">Hepatologist</span>
+          </label>
+
+          <label class="doctor-opt {% if suggested == 'Nephrologist' %}selected{% endif %}"
+            onclick="selectDoctor(this, 'Nephrologist')">
+            <input type="radio" name="specialty" value="Nephrologist" {% if suggested=='Nephrologist' %}checked{% endif
+              %} />
+            <span class="d-icon">🫘</span>
+            <span class="d-name">Dr. Vikram Singh</span>
+            <span class="d-spec">Nephrologist</span>
+          </label>
+
+          <label class="doctor-opt" onclick="selectDoctor(this, 'General Physician')">
+            <input type="radio" name="specialty" value="General Physician" />
+            <span class="d-icon">🩺</span>
+            <span class="d-name">Dr. Priya Nair</span>
+            <span class="d-spec">General Physician</span>
+          </label>
+
+          <label class="doctor-opt" onclick="selectDoctor(this, 'Dietitian / Nutritionist')">
+            <input type="radio" name="specialty" value="Dietitian / Nutritionist" />
+            <span class="d-icon">🥗</span>
+            <span class="d-name">Dr. Ananya Iyer</span>
+            <span class="d-spec">Dietitian</span>
+          </label>
+
+        </div>
+        <!-- hidden doctor name field — set by JS -->
+        <input type="hidden" name="doctor" id="doctor-hidden" value="" />
+
+        <!-- Date -->
+        <div class="form-section-title">📅 Preferred Date</div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Select Date *</label>
+            <input type="date" name="date" id="date-input" required />
+          </div>
+        </div>
+
+        <!-- Time Slots -->
+        <div class="form-section-title">🕐 Preferred Time Slot</div>
+        <div class="slot-grid">
+          {% for slot in ['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'] %}
+          <label class="slot-btn" onclick="selectSlot(this, '{{ slot }}')">
+            <input type="radio" name="time_slot" value="{{ slot }}" />
+            {{ slot }}
+          </label>
+          {% endfor %}
+        </div>
+
+        <!-- Notes -->
+        <div class="form-section-title">📝 Additional Notes</div>
+        <div class="field">
+          <label>Describe your symptoms or reason for visit (optional)</label>
+          <textarea name="notes" rows="3"
+            placeholder="e.g. High glucose levels detected, family history of diabetes, need dietary advice..."></textarea>
+        </div>
+
+        {% if suggested %}
+        <div style="margin-top:16px; padding:12px 16px; background:rgba(79,142,247,0.08);
+                  border:1px solid rgba(79,142,247,0.2); border-radius:8px; font-size:13px; color:var(--accent)">
+          💡 Based on your health analysis, we've pre-selected <strong>{{ suggested }}</strong> as the recommended
+          specialty.
+        </div>
+        {% endif %}
+
+        <button type="submit" class="submit-btn">📅 &nbsp;Confirm Appointment Request</button>
+
+      </form>
+    </div>
+
+    {% endif %}
+
+  </div>
+
+  <script>
+    // Set min date to today
+    const di = document.getElementById('date-input');
+    if (di) {
+      const today = new Date().toISOString().split('T')[0];
+      di.setAttribute('min', today);
+    }
+
+    const doctorNames = {
+      'Endocrinologist': 'Dr. Meera Kapoor',
+      'Cardiologist': 'Dr. Arjun Mehta',
+      'Hepatologist / Gastroenterologist': 'Dr. Sunita Rao',
+      'Nephrologist': 'Dr. Vikram Singh',
+      'General Physician': 'Dr. Priya Nair',
+      'Dietitian / Nutritionist': 'Dr. Ananya Iyer',
+    };
+
+    function selectDoctor(el, specialty) {
+      document.querySelectorAll('.doctor-opt').forEach(d => d.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('doctor-hidden').value = doctorNames[specialty] || specialty;
+    }
+
+    function selectSlot(el, slot) {
+      document.querySelectorAll('.slot-btn').forEach(s => s.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    // Auto-select pre-suggested doctor name on load
+    window.addEventListener('load', () => {
+      const selected = document.querySelector('.doctor-opt.selected');
+      if (selected) {
+        const spec = selected.querySelector('input[type=radio]').value;
+        document.getElementById('doctor-hidden').value = doctorNames[spec] || spec;
+      }
+    });
+  </script>
+</body>
+
+</html>
