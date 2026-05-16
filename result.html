@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthAI — Your Results</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f7f5;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --accent: #9df23d;
+      --accent-hover: #b0fb57;
+      --text: #1a201d;
+      --muted: #64748b;
+      --dark-bg: #1a201d;
+      --red: #ff4b4b;
+      --green: #8bed16;
+      --yellow: #facc15;
+      --orange: #fb923c;
+      --purple: #c084fc;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.02);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    nav {
+      background: #fdfdfd;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-brand::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 6px;
+      transform: rotate(45deg);
+    }
+
+    .nav-brand span {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .btn-outline {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background: var(--accent);
+      color: var(--dark-bg);
+      border-color: var(--accent);
+    }
+
+    .btn-outline-dark {
+      background: transparent;
+      color: var(--dark-bg);
+      border: 2px solid var(--dark-bg);
+    }
+
+    .btn-outline-dark:hover {
+      background: var(--dark-bg);
+      color: #fff;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--dark-bg);
+      box-shadow: 0 6px 20px rgba(157, 242, 61, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 10px 30px rgba(157, 242, 61, 0.4);
+    }
+
+    .btn-green {
+      background: var(--dark-bg);
+      color: #fff;
+    }
+
+    /* ── Hero result bar ── */
+    .result-hero {
+      background: #fdfdfd;
+      padding: 60px 24px 80px;
+      text-align: center;
+      border-radius: 0 0 40px 40px;
+      margin-bottom: -40px;
+      border-bottom: 1px solid var(--border);
+      animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .result-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+      letter-spacing: -1px;
+    }
+
+    .result-hero p {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    /* ── Container ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 70px;
+      position: relative;
+      z-index: 2;
+      animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s backwards;
+    }
+
+    /* ── Risk score cards row ── */
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    @media(max-width:900px) {
+      .risk-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:500px) {
+      .risk-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .risk-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .risk-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .risk-card .glow {
+      position: absolute;
+      inset: 0;
+      opacity: .05;
+      pointer-events: none;
+    }
+
+    .risk-card .disease-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .risk-card .disease-name {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .risk-card .score {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .risk-card .score-pct {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .risk-card .risk-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── Progress bars ── */
+    .progress-track {
+      background: #f1f5f9;
+      border-radius: 100px;
+      height: 10px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 1.2s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+    }
+
+    /* ── SHAP grid ── */
+    .shap-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    @media(max-width:768px) {
+      .shap-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .shap-card {
+      background: var(--dark-bg);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .shap-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .shap-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .shap-card img {
+      width: 100%;
+      border-radius: 12px;
+      filter: invert(0.9) hue-rotate(180deg);
+    }
+
+    /* Adapt dark-mode plt to cool scheme if needed, or leave it. Actually the python saves it with dark theme hardcoded. I will let the image sit as is, Python outputs "#1c2230" background which blends well with dark-bg */
+    .shap-explain {
+      font-size: 12px;
+      color: #a1a1aa;
+      margin-top: 16px;
+      line-height: 1.6;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+
+    /* ── Tips section ── */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    @media(max-width:640px) {
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tip-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 20px;
+      padding: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--text);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+      transition: all 0.3s;
+    }
+
+    .tip-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04);
+    }
+
+    .tip-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Actions row ── */
+    .actions-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px 0 40px;
+    }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      background: #fff8ec;
+      border: 1px solid #ffe8c3;
+      border-radius: 20px;
+      padding: 20px 24px;
+      font-size: 14px;
+      color: #d97706;
+      font-weight: 500;
+      line-height: 1.6;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav>
+    <div class="nav-brand">Health<span>AI</span></div>
+    <div class="nav-actions">
+      <a href="/" class="btn btn-outline">← New Analysis</a>
+      <a href="/download_pdf" class="btn btn-primary">⬇ Download PDF Report</a>
+      <a href="/book" class="btn btn-green">📅 Book Doctor</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <div class="result-hero">
+    <h1>Health Risk Analysis — {{ patient_name }}</h1>
+    <p>Age: {{ patient_age }} &nbsp;|&nbsp; Analysis completed across 4 disease models &nbsp;|&nbsp; Powered by Gradient
+      Boosting & Random Forest</p>
+  </div>
+
+  <div class="container">
+
+    <!-- ── Risk Score Cards ── -->
+    <div class="risk-grid">
+
+      {% set icons = {'diabetes': '🩸', 'heart': '❤️', 'liver': '🤎', 'kidney': '🫘'} %}
+      {% set names = {'diabetes': 'Diabetes', 'heart': 'Heart Disease', 'liver': 'Liver Disease', 'kidney': 'Kidney
+      Disease'} %}
+      {% set bar_colors = {'diabetes': '#f85149', 'heart': '#fb8f44', 'liver': '#9b59b6', 'kidney': '#4f8ef7'} %}
+
+      {% for key in ['diabetes', 'heart', 'liver', 'kidney'] %}
+      {% set r = results[key] %}
+      <div class="risk-card">
+        <div class="glow"
+          style="background: radial-gradient(circle at 50% 0%, {{ bar_colors[key] }}, transparent 70%);"></div>
+        <div class="disease-icon">{{ icons[key] }}</div>
+        <div class="disease-name">{{ names[key] }}</div>
+        <div class="score" style="color: {{ r.color }}">
+          {{ r.pct }}<span class="score-pct">%</span>
+        </div>
+        <div class="risk-badge"
+          style="background: {{ r.color }}22; color: {{ r.color }}; border: 1px solid {{ r.color }}44">
+          {{ r.label }}
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" data-width="{{ r.pct }}" style="width: 0%; background: {{ bar_colors[key] }}">
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <!-- ── SHAP Explanations ── -->
+    <div class="section-title">🧠 Why the AI Made These Predictions (SHAP Values)</div>
+
+    <div class="shap-grid">
+      {% for key in ['diabetes', 'heart', 'liver', 'kidney'] %}
+      <div class="shap-card">
+        <h4>{{ names[key] }} — Feature Impact</h4>
+        <img src="data:image/png;base64,{{ results[key].chart }}" alt="SHAP chart for {{ key }}" />
+        <div class="shap-explain">
+          <strong>How to read this:</strong> Blue bars show features that <em>increased</em> the risk score.
+          Grey bars show features that <em>decreased</em> it.
+          Longer bars = bigger influence on the prediction.
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- ── Action Buttons ── -->
+    <div class="actions-row">
+      <a href="/download_pdf" class="btn btn-primary" style="font-size:15px; padding:13px 28px">
+        ⬇ &nbsp;Download Full PDF Report
+      </a>
+      <a href="/book" class="btn btn-green" style="font-size:15px; padding:13px 28px">
+        📅 &nbsp;Book a Doctor Appointment
+      </a>
+      <a href="/" class="btn btn-outline-dark" style="font-size:15px; padding:13px 28px">
+        ↩ &nbsp;Run Another Analysis
+      </a>
+    </div>
+
+    <!-- ── Lifestyle Recommendations ── -->
+    <div class="section-title">💡 Personalised Lifestyle Recommendations</div>
+
+    <div class="tips-grid">
+      {% set tip_icons = ['🥗','🏃','💊','🚭','💧','😴','🩺','🍎','🧘','🫀'] %}
+      {% for tip in tips %}
+      <div class="tip-card">
+        <span class="tip-icon">{{ tip_icons[loop.index0 % tip_icons|length] }}</span>
+        <span>{{ tip }}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- ── Disclaimer ── -->
+    <div class="disclaimer">
+      ⚠️ <strong>Important:</strong> These predictions are generated by machine learning models trained on public
+      medical datasets.
+      They are for screening and awareness purposes only, and should not be used as a substitute for professional
+      medical diagnosis.
+      If you have concerns about your health, please consult a qualified doctor immediately.
+    </div>
+
+  </div>
+
+  <script>
+    // Animate progress bars on load
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.progress-fill').forEach(bar => {
+        const target = bar.dataset.width;
+        setTimeout(() => { bar.style.width = target + '%'; }, 300);
+      });
+    });
+  </script>
+</body>
+
+</html>
