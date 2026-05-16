@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>HealthAI — Multi-Disease Risk Predictor</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4f7f5;
+      --s1: #ffffff;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --accent: #9df23d;
+      /* Lime green */
+      --accent-hover: #b0fb57;
+      --text: #1a201d;
+      --muted: #64748b;
+      --dark-bg: #1a201d;
+      /* Dark hero background */
+      --input-bg: #f8faf9;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Bouncy animations */
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.02);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .bouncy {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Nav */
+    nav {
+      background: #0d211c;
+      padding: 24px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      letter-spacing: 0;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand::before {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 6px;
+      transform: rotate(45deg);
+    }
+
+    .brand em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--accent);
+    }
+
+    .nav-link.active {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 100px;
+    }
+
+    .nav-btn {
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 24px;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .nav-btn:hover {
+      background: var(--accent);
+      color: #0d211c;
+      border-color: var(--accent);
+      transform: translateY(-2px) scale(1.05);
+    }
+
+    /* Hero */
+    .hero-wrapper {
+      background: #0d211c;
+      padding: 0 20px 40px;
+      background-image: radial-gradient(#204a3f 1.5px, transparent 1.5px);
+      background-size: 40px 40px;
+      position: relative;
+    }
+
+    .hero {
+      background: radial-gradient(ellipse at top, #194a3e 0%, transparent 70%);
+      padding: 80px 24px;
+      text-align: center;
+      border-radius: 0 0 40px 40px;
+      border-bottom: none;
+      margin-bottom: 40px;
+      animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      background: rgba(157, 242, 61, .15);
+      border: 1px solid rgba(157, 242, 61, .3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      border-radius: 100px;
+    }
+
+    .badge::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .5;
+        transform: scale(1.3);
+      }
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      color: #fff;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1.05;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+
+    .sub {
+      color: #a4c9c1;
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 14px;
+      color: #fff;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .pill:hover {
+      background: var(--accent);
+      color: #0d211c;
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    /* Steps - hidden from UI as it clutters, replaced with clean layout */
+    .steps {
+      display: none;
+    }
+
+    /* Form Wrap */
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px 100px;
+      animation: bounceIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s backwards;
+    }
+
+    .scard {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 40px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .scard:hover {
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.06);
+      transform: translateY(-4px);
+    }
+
+    .scard-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 30px
+    }
+
+    .scard-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .scard-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .scard-head p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .g2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px
+    }
+
+    .g3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px
+    }
+
+    @media(max-width:768px) {
+
+      .g2,
+      .g3 {
+        grid-template-columns: 1fr
+      }
+
+      .scard {
+        padding: 24px;
+        border-radius: 20px;
+      }
+    }
+
+    .f {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .f label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.5px;
+    }
+
+    .f input,
+    .f select {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 20px;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      appearance: none
+    }
+
+    .f input:focus,
+    .f select:focus {
+      outline: none;
+      border-color: var(--dark-bg);
+      box-shadow: 0 0 0 4px rgba(157, 242, 61, 0.2);
+      background: #fff;
+    }
+
+    .f .hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+      margin-left: 10px;
+    }
+
+    .bmi-badge {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 100px
+    }
+
+    /* Toggles */
+    .tog {
+      display: flex;
+      gap: 4px;
+      background: var(--input-bg);
+      padding: 4px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+    }
+
+    .tog-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 100px;
+      color: var(--muted);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .tog-btn.on-yes {
+      background: var(--accent);
+      color: var(--dark-bg);
+      box-shadow: 0 4px 10px rgba(157, 242, 61, 0.3);
+      transform: scale(1.02);
+    }
+
+    .tog-btn.on-no {
+      background: var(--dark-bg);
+      color: #fff;
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input.tr {
+      display: none
+    }
+
+    /* Symgrid - Pill shapes */
+    .symgrid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .sym {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      user-select: none;
+      font-weight: 500;
+    }
+
+    .sym:hover {
+      border-color: var(--dark-bg);
+      transform: translateY(-2px);
+    }
+
+    .sym.on {
+      background: var(--dark-bg);
+      border-color: var(--dark-bg);
+      color: #fff;
+      padding-right: 15px;
+    }
+
+    .sym input {
+      display: none
+    }
+
+    .sym-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      font-size: 12px;
+      color: transparent;
+    }
+
+    .sym.on .sym-box {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--dark-bg);
+    }
+
+    .sym-txt {
+      font-size: 14px;
+    }
+
+    .sym-tag {
+      margin-left: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .divlabel {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 30px 0 16px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* Submit Button */
+    .submit-wrap {
+      text-align: center;
+      margin-top: 40px
+    }
+
+    .submit-btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 100px;
+      color: var(--dark-bg);
+      cursor: pointer;
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 20px 80px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 8px 30px rgba(157, 242, 61, 0.4);
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(157, 242, 61, 0.5);
+    }
+
+    .submit-note {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 16px;
+      font-weight: 500;
+    }
+
+    /* Disclaimer */
+    .disc {
+      background: #fff8ec;
+      border: 1px solid #ffe8c3;
+      border-radius: 20px;
+      padding: 20px;
+      font-size: 14px;
+      color: #d97706;
+      margin-top: 30px;
+      line-height: 1.6;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--border);
+      outline: none;
+      padding: 0;
+      border: none;
+      margin-top: 10px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: 4px solid var(--dark-bg);
+      box-shadow: 0 0 0 2px #fff;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    .range-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-bg);
+      text-align: right;
+      margin-top: 8px
+    }
+
+    /* Fixes for toggles so default 'no' state looks good but not as strong as 'yes' */
+    .tog-btn.on-no {
+      background: #ffffff;
+      color: var(--dark-bg);
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="brand">Health<em>AI</em></div>
+    <div class="nav-links" style="display:flex; gap:20px;">
+      <a href="#" class="nav-link active">Home</a>
+      <a href="#" class="nav-link">Features ▾</a>
+      <a href="#" class="nav-link">About</a>
+      <a href="#" class="nav-link">Services</a>
+    </div>
+    <div style="display:flex; align-items:center; gap: 15px;">
+      <a href="/login" class="nav-link" style="color:#fff;">Login</a>
+      <a href="/book" class="nav-btn">Register</a>
+    </div>
+  </nav>
+
+  <div class="hero-wrapper">
+    <div class="hero">
+      <div class="badge">Cloud Health System</div>
+      <h1>Maximize Health <br />With <span style="color:var(--accent)">Secure Intelligence</span>.</h1>
+      <p class="sub">Store your work with confidence using our advanced cloud solution, designed to provide unparalleled
+        medical precision tailored to your needs.</p>
+      <div class="pills">
+        <span class="pill">🩸 Diabetes Screen</span>
+        <span class="pill">❤️ Heart Assessment</span>
+        <span class="pill">🤎 Liver Analysis</span>
+        <span class="pill">🫘 Kidney Check</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step"><span class="n">1</span>Fill this form</div>
+    <span class="step-arrow">›</span>
+    <div class="step"><span class="n">2</span>AI runs 4 models</div>
+    <span class="step-arrow">›</span>
+    <div class="step"><span class="n">3</span>Get risk scores + explanations</div>
+    <span class="step-arrow">›</span>
+    <div class="step"><span class="n">4</span>Download report + book doctor</div>
+  </div>
+
+  <div class="wrap">
+    <form action="/predict" method="POST">
+
+      <!-- 1. About You -->
+      <div class="scard">
+        <div class="scard-head">
+          <div class="scard-icon" style="background:rgba(59,130,246,.12)">👤</div>
+          <div>
+            <h2>About You</h2>
+            <p>Basic details — takes 30 seconds</p>
+          </div>
+        </div>
+        <div class="g3">
+          <div class="f">
+            <label>Your Name</label>
+            <input type="text" name="patient_name" placeholder="e.g. Rahul Sharma" />
+          </div>
+          <div class="f">
+            <label>Age (years) *</label>
+            <input type="number" name="age" id="age-inp" placeholder="e.g. 42" min="18" max="100" required
+              oninput="syncAgeCat(this.value)" />
+          </div>
+          <div class="f">
+            <label>Biological Sex *</label>
+            <select name="sex">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <input type="hidden" name="age_cat" id="age-cat-h" value="40-44" />
+        </div>
+        <div class="g2" style="margin-top:13px">
+          <div class="f">
+            <label>Weight (kg) *</label>
+            <input type="number" id="weight-inp" placeholder="e.g. 70" step="0.1" required oninput="calcBMI()" />
+          </div>
+          <div class="f">
+            <label>Height *</label>
+            <div style="display:flex; gap:10px;">
+              <input type="number" id="height-ft" placeholder="Feet" min="2" max="8" style="flex:1" required
+                oninput="calcBMI()" />
+              <input type="number" id="height-in" placeholder="Inches" min="0" max="11" style="flex:1" required
+                oninput="calcBMI()" />
+            </div>
+            <input type="hidden" name="bmi" id="bmi-hidden" value="25" />
+            <span class="bmi-badge" id="bmi-badge" style="display:none; margin-top:8px;"></span>
+          </div>
+          <div class="f">
+            <label>Systolic BP (mmHg) — top number</label>
+            <input type="number" name="systolic_bp" placeholder="e.g. 125" min="80" max="220" value="120" />
+            <span class="hint">From home monitor or pharmacy · Normal &lt;120</span>
+          </div>
+          <div class="f">
+            <label>Diastolic BP (mmHg) — bottom number</label>
+            <input type="number" name="diastolic_bp" placeholder="e.g. 80" min="50" max="140" value="80" />
+            <span class="hint">Normal &lt;80</span>
+          </div>
+          <div class="f">
+            <label>Average Sleep (hours/night)</label>
+            <input type="number" name="sleep_hrs" placeholder="e.g. 7" min="3" max="12" step="0.5" value="7" />
+          </div>
+          <div class="f">
+            <label>Days of poor physical health (last 30 days)</label>
+            <input type="number" name="phys_days" placeholder="e.g. 3" min="0" max="30" value="0" />
+            <span class="hint">Days when illness limited normal activities</span>
+          </div>
+          <div class="f">
+            <label>Overall general health</label>
+            <select name="gen_health">
+              <option value="1">Excellent</option>
+              <option value="2">Very Good</option>
+              <option value="3" selected>Good</option>
+              <option value="4">Fair</option>
+              <option value="5">Poor</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Symptoms -->
+      <div class="scard">
+        <div class="scard-head">
+          <div class="scard-icon" style="background:rgba(239,68,68,.12)">🩺</div>
+          <div>
+            <h2>Current Symptoms</h2>
+            <p>Tick everything you've been experiencing — even mild or occasional</p>
+          </div>
+        </div>
+        <div class="symgrid">
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="fatigue" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Fatigue / low energy</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="diff_walk" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Difficulty walking / stairs</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="stroke" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">History of stroke</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="jaundice" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Yellowish skin or eyes</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="nausea" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Nausea or vomiting</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="abdominal_pain" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Abdominal pain</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="loss_appetite" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Loss of appetite</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="dark_urine" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Dark / cola-coloured urine</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="swelling" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Swollen feet or ankles</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="muscle_cramps" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Muscle cramps</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="itching" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Persistent skin itching</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="uti" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Urinary tract infections</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="prev_aki" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Past acute kidney injury</span>
+          </label>
+          <label class="sym" onclick="toggleSym(this)">
+            <input type="checkbox" name="kidney_hx" value="yes" />
+            <div class="sym-box">✓</div><span class="sym-txt">Known kidney condition</span>
+          </label>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px">
+          Select any symptoms you are experiencing. Selecting none is perfectly fine.
+        </p>
+      </div>
+
+      <!-- 3. Lifestyle -->
+      <div class="scard">
+        <div class="scard-head">
+          <div class="scard-icon" style="background:rgba(34,197,94,.12)">🌿</div>
+          <div>
+            <h2>Lifestyle & Health</h2>
+            <p>Be honest — this is confidential and improves accuracy</p>
+          </div>
+        </div>
+
+        <div class="divlabel">Habits</div>
+        <div class="g2">
+          <div class="f"><label>Do you smoke?</label>
+            <div class="tog">
+              <label class="tog-btn" id="sm-y" onclick="tog('smoker','yes','sm-y','sm-n')">
+                <input type="radio" name="smoker" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="sm-n" onclick="tog('smoker','no','sm-y','sm-n')">
+                <input type="radio" name="smoker" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>Drink alcohol regularly?</label>
+            <div class="tog">
+              <label class="tog-btn" id="al-y" onclick="tog('alcohol','yes','al-y','al-n')">
+                <input type="radio" name="alcohol" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="al-n" onclick="tog('alcohol','no','al-y','al-n')">
+                <input type="radio" name="alcohol" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>Physically active? (30+ min, 3×/week)</label>
+            <div class="tog">
+              <label class="tog-btn" id="ac-y" onclick="tog('phys_active','yes','ac-y','ac-n')">
+                <input type="radio" name="phys_active" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="ac-n" onclick="tog('phys_active','no','ac-y','ac-n')">
+                <input type="radio" name="phys_active" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>Eat fruit daily?</label>
+            <div class="tog">
+              <label class="tog-btn" id="fr-y" onclick="tog('fruits','yes','fr-y','fr-n')">
+                <input type="radio" name="fruits" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="fr-n" onclick="tog('fruits','no','fr-y','fr-n')">
+                <input type="radio" name="fruits" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>Eat vegetables daily?</label>
+            <div class="tog">
+              <label class="tog-btn" id="vg-y" onclick="tog('veggies','yes','vg-y','vg-n')">
+                <input type="radio" name="veggies" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="vg-n" onclick="tog('veggies','no','vg-y','vg-n')">
+                <input type="radio" name="veggies" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f">
+            <label>Diet Quality (0 = poor, 10 = excellent)</label>
+            <input type="range" name="diet_score" id="diet-r" min="0" max="10" step="0.5" value="5"
+              oninput="document.getElementById('dv').textContent=this.value" />
+            <div class="range-val">Score: <span id="dv">5</span> / 10</div>
+          </div>
+        </div>
+
+        <div class="divlabel" style="margin-top:22px">Known Medical Conditions</div>
+        <div class="g2">
+          <div class="f"><label>High blood pressure?</label>
+            <div class="tog">
+              <label class="tog-btn" id="bp-y" onclick="tog('high_bp','yes','bp-y','bp-n')">
+                <input type="radio" name="high_bp" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="bp-n" onclick="tog('high_bp','no','bp-y','bp-n')">
+                <input type="radio" name="high_bp" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>High cholesterol?</label>
+            <div class="tog">
+              <label class="tog-btn" id="hc-y" onclick="tog('high_chol','yes','hc-y','hc-n')">
+                <input type="radio" name="high_chol" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="hc-n" onclick="tog('high_chol','no','hc-y','hc-n')">
+                <input type="radio" name="high_chol" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>Diabetes (previously diagnosed)?</label>
+            <div class="tog">
+              <label class="tog-btn" id="db-y" onclick="tog('diabetic','yes','db-y','db-n')">
+                <input type="radio" name="diabetic" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="db-n" onclick="tog('diabetic','no','db-y','db-n')">
+                <input type="radio" name="diabetic" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Family History -->
+      <div class="scard">
+        <div class="scard-head">
+          <div class="scard-icon" style="background:rgba(234,179,8,.12)">🧬</div>
+          <div>
+            <h2>Family History</h2>
+            <p>Has any blood relative (parent, sibling) been diagnosed with these?</p>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="f"><label>Diabetes in family</label>
+            <div class="tog">
+              <label class="tog-btn" id="fd-y" onclick="tog('family_diabetes','yes','fd-y','fd-n')">
+                <input type="radio" name="family_diabetes" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="fd-n" onclick="tog('family_diabetes','no','fd-y','fd-n')">
+                <input type="radio" name="family_diabetes" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>Heart disease in family</label>
+            <div class="tog">
+              <label class="tog-btn" id="fh-y" onclick="tog('family_heart','yes','fh-y','fh-n')">
+                <input type="radio" name="family_heart" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="fh-n" onclick="tog('family_heart','no','fh-y','fh-n')">
+                <input type="radio" name="family_heart" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>Kidney disease in family</label>
+            <div class="tog">
+              <label class="tog-btn" id="fk-y" onclick="tog('family_kidney','yes','fk-y','fk-n')">
+                <input type="radio" name="family_kidney" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="fk-n" onclick="tog('family_kidney','no','fk-y','fk-n')">
+                <input type="radio" name="family_kidney" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+          <div class="f"><label>Hypertension in family</label>
+            <div class="tog">
+              <label class="tog-btn" id="fht-y" onclick="tog('family_hypertension','yes','fht-y','fht-n')">
+                <input type="radio" name="family_hypertension" value="yes" class="tr" /> Yes</label>
+              <label class="tog-btn on-no" id="fht-n" onclick="tog('family_hypertension','no','fht-y','fht-n')">
+                <input type="radio" name="family_hypertension" value="no" class="tr" checked /> No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="disc">
+        ⚠️ <strong>Medical Disclaimer:</strong> This tool is for educational awareness and screening only.
+        It does not diagnose any disease. Predictions are based on statistical models trained on
+        population-level data. Always consult a qualified doctor before making any health decisions.
+      </div>
+
+      <div class="submit-wrap">
+        <button type="submit" class="submit-btn">🔬 &nbsp; Analyse My Health Risk</button>
+        <p class="submit-note">4 AI models · Results in seconds · No data stored on our servers</p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const ageCats = [[18, 24, '18-24'], [25, 29, '25-29'], [30, 34, '30-34'], [35, 39, '35-39'],
+    [40, 44, '40-44'], [45, 49, '45-49'], [50, 54, '50-54'], [55, 59, '55-59'],
+    [60, 64, '60-64'], [65, 69, '65-69'], [70, 74, '70-74'], [75, 79, '75-79'], [80, 120, '80 or older']];
+    function syncAgeCat(v) { const a = parseInt(v); for (const [lo, hi, c] of ageCats) { if (a >= lo && a <= hi) { document.getElementById('age-cat-h').value = c; break } } }
+
+    function calcBMI() {
+      const w = parseFloat(document.getElementById('weight-inp').value);
+      const ft = parseFloat(document.getElementById('height-ft').value) || 0;
+      const inc = parseFloat(document.getElementById('height-in').value) || 0;
+      const badge = document.getElementById('bmi-badge');
+      const hidden = document.getElementById('bmi-hidden');
+
+      if (!w || !ft) {
+        badge.style.display = 'none';
+        return;
+      }
+
+      const totalInches = (ft * 12) + inc;
+      const meters = totalInches * 0.0254;
+      const b = w / (meters * meters);
+
+      if (isNaN(b) || b < 10 || b > 100) return;
+
+      hidden.value = b.toFixed(2);
+
+      let cat, bg, clr;
+      if (b < 18.5) { cat = 'Underweight'; bg = 'rgba(59,130,246,.15)'; clr = '#3b82f6' }
+      else if (b < 25) { cat = 'Normal weight'; bg = 'rgba(34,197,94,.15)'; clr = '#22c55e' }
+      else if (b < 30) { cat = 'Overweight'; bg = 'rgba(234,179,8,.15)'; clr = '#eab308' }
+      else { cat = 'Obese'; bg = 'rgba(239,68,68,.15)'; clr = '#ef4444' }
+      badge.textContent = `BMI ${b.toFixed(1)} — ${cat}`;
+      badge.style.cssText = `display:inline-block;background:${bg};color:${clr};padding:4px 12px;border-radius:100px;font-size:12px;font-weight:700;margin-top:8px`;
+    }
+
+    function toggleSym(el) { const cb = el.querySelector('input'); cb.checked = !cb.checked; el.classList.toggle('on', cb.checked) }
+
+    function tog(name, val, yId, nId) {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(r => { r.checked = r.value === val });
+      const y = document.getElementById(yId), n = document.getElementById(nId);
+      if (!y || !n) return;
+      if (val === 'yes') {
+        y.classList.add('on-yes'); y.classList.remove('on-no');
+        n.classList.remove('on-yes', 'on-no');
+      }
+      else {
+        n.classList.add('on-no'); n.classList.remove('on-yes');
+        y.classList.remove('on-yes', 'on-no');
+      }
+    }
+  </script>
+</body>
+
+</html>
